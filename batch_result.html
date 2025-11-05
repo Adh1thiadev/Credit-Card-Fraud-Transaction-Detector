@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Batch Prediction Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Batch Prediction Results</h1>
+
+        <div class="table-container">
+            {{ table | safe }}
+        </div>
+
+        <br>
+
+        <!-- NEW: Dashboard link (Option B) -->
+        <div style="margin-top:12px;">
+            <a href="{{ url_for('dashboard') }}" class="btn" style="background:#0b69ff;">📊 View Admin Dashboard</a>
+            <a href="{{ url_for('home') }}" class="btn" style="background:#6c757d;">🏠 Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

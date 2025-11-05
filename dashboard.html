@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Credit Card Fraud Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+    <div class="container">
+        <header style="display:flex;justify-content:space-between;align-items:center;">
+            <h1>📊 Admin Dashboard</h1>
+            <div>
+                <a href="/" class="btn" style="background:#4caf50;">🏠 Home</a>
+                <a href="/download/batch" class="btn">⬇️ Download Last Batch</a>
+            </div>
+        </header>
+
+        <section style="margin-top:18px;">
+            <div class="stats-row" style="align-items:center;">
+                <div class="card">
+                    <h3 style="margin:0 0 6px 0;">Total processed</h3>
+                    <p style="font-size:20px;margin:0;">{{ stats.total }}</p>
+                </div>
+                <div class="card">
+                    <h3 style="margin:0 0 6px 0;">Fraud</h3>
+                    <p style="font-size:20px;margin:0;color:#d32f2f;">{{ stats.fraud }}</p>
+                </div>
+                <div class="card">
+                    <h3 style="margin:0 0 6px 0;">Legit</h3>
+                    <p style="font-size:20px;margin:0;color:#2e7d32;">{{ stats.legit }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="chart-row" style="margin-top:22px;">
+            <div style="max-width:700px;margin:auto;">
+                <canvas id="fraudChart" width="700" height="320" aria-label="Fraud vs Legit chart"></canvas>
+            </div>
+        </section>
+
+        <section class="images-row" style="margin-top:26px;">
+            <h3>Model Evaluation</h3>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+                {% if images.confusion %}
+                    <div class="img-card">
+                        <figure>
+                            <img src="{{ url_for('static', filename=images.confusion) }}" alt="Confusion Matrix">
+                            <figcaption style="text-align:center;font-size:13px;margin-top:6px;">Confusion Matrix</figcaption>
+                        </figure>
+                    </div>
+                {% endif %}
+                {% if images.roc %}
+                    <div class="img-card">
+                        <figure>
+                            <img src="{{ url_for('static', filename=images.roc) }}" alt="ROC Curve">
+                            <figcaption style="text-align:center;font-size:13px;margin-top:6px;">ROC Curve</figcaption>
+                        </figure>
+                    </div>
+                {% endif %}
+                {% if images.shap %}
+                    <div class="img-card">
+                        <figure>
+                            <img src="{{ url_for('static', filename=images.shap) }}" alt="SHAP Summary">
+                            <figcaption style="text-align:center;font-size:13px;margin-top:6px;">SHAP Summary</figcaption>
+                        </figure>
+                    </div>
+                {% endif %}
+                {% if not images.confusion and not images.roc and not images.shap %}
+                    <p>No evaluation images found. Run the training script to generate them.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section style="margin-top:30px;">
+            <h3>Recent Predictions (tail)</h3>
+            {% if recent %}
+                <div style="overflow:auto;max-height:320px;margin-top:8px;">
+                    <table class="styled-table" style="min-width:800px;">
+                        <thead>
+                            <tr>
+                                {% for k in recent[0].keys() %}
+                                    <th>{{ k }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in recent %}
+                                <tr>
+                                    {% for v in row.values() %}
+                                        <td>{{ v }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No recent batch results found. Upload a CSV via the main page to generate results.</p>
+            {% endif %}
+        </section>
+
+        <footer style="margin-top:28px;text-align:center;color:#666;font-size:13px;">
+            © {{ (2025) }} Credit Card Fraud Detection — Academic Project
+        </footer>
+    </div>
+
+    <script>
+        // Chart data from template variables
+        
+    // Safely inject template variables into JavaScript
+    const fraudCount = Number("{{ stats.fraud | default(0, true) }}");
+    const legitCount = Number("{{ stats.legit | default(0, true) }}");
+
+
+       
+
+        const ctx = document.getElementById('fraudChart').getContext('2d');
+        const fraudChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Fraud', 'Legit'],
+                datasets: [{
+                    data: [fraudCount, legitCount],
+                    // let Chart.js handle default colors
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: 'Fraud vs Legit (Latest Batch)' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Credit Card Fraud Detection</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💳 Credit Card Fraud Detection</h1>
+            <div class="lead">Quick test: manual or batch prediction</div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left: Manual Entry -->
+            <div class="card manual-card">
+                <h2 style="margin-top:0;">Manual Entry</h2>
+                <p class="hint">Enter 30 transaction features:</p>
+
+                <!-- Manual entry form posts to /predict -->
+                <form action="/predict" method="post" id="manual-form">
+                    <div class="features-grid">
+                        {% for i in range(30) %}
+                        <div class="feature-item">
+                            <div class="badge">{{ i+1 }}</div>
+                            <input type="number" name="feature{{ i }}" placeholder="Feature {{ i+1 }}" step="any" required>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="predict-row" style="margin-top:12px;">
+                        <button type="submit" class="btn">Predict</button>
+                        <button type="reset" form="manual-form" class="btn secondary">Reset</button>
+                    </div>
+                </form>
+
+                <hr style="border:0;border-top:1px solid rgba(255,255,255,0.06);margin:18px 0;">
+
+                <h2 style="margin-top:0;">Batch Upload</h2>
+                <p class="hint">Upload a CSV with features (no target column required).</p>
+
+                <!-- Batch upload form posts to /upload -->
+                <form action="/upload" method="post" enctype="multipart/form-data" id="upload-form">
+                    <div class="upload-card">
+                        <div class="custom-file-input">
+                            <label class="custom-file-label" for="file">📁 Choose CSV</label>
+                            <input id="file" name="file" type="file" accept=".csv">
+                            <span class="custom-file-name" id="file-name">No file chosen</span>
+                        </div>
+
+                        <div style="margin-top:8px; display:flex; gap:12px;">
+                            <button type="submit" class="btn">Upload & Predict</button>
+                            <a href="{{ url_for('dashboard') }}" class="btn ghost" style="align-self:center;">View Dashboard</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right: Info / Quick actions -->
+            <aside class="card" style="min-height:240px;">
+                <h3 style="margin-top:0;">Tips</h3>
+                <ul style="color:var(--muted);font-size:14px;line-height:1.6;">
+                    <li>Manual inputs must be numeric (use step=any for decimals).</li>
+                    <li>Batch CSV should include the same feature order used in training.</li>
+                    <li>After upload, you can view results in <strong>Batch Results</strong> page and Dashboard.</li>
+                </ul>
+
+                <div style="margin-top:16px;">
+                    <a href="{{ url_for('dashboard') }}" class="btn ghost" style="display:inline-block;">Open Dashboard</a>
+                    <a href="/" class="btn secondary" style="display:inline-block;margin-left:8px;">Home</a>
+                </div>
+            </aside>
+        </div>
+
+        <footer>
+            <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.03); padding-top:14px; color:var(--muted); font-size:13px;">
+                © {{ (2025) }} Credit Card Fraud Detection — Academic Project
+            </div>
+        </footer>
+    </div>
+
+    <!-- Small JS for file chooser UI -->
+    <script>
+      (function(){
+        const fileInput = document.getElementById('file');
+        const fileNameSpan = document.getElementById('file-name');
+        const fileLabel = document.querySelector('.custom-file-label');
+
+        if (fileInput && fileLabel && fileNameSpan) {
+          // clicking the label opens the file choosers
+          fileLabel.addEventListener('click', () => fileInput.click());
+
+          fileInput.addEventListener('change', () => {
+            const f = fileInput.files[0];
+            fileNameSpan.textContent = f ? f.name : 'No file chosen';
+          });
+        }
+      })();
+    </script>
+</body>
+</html>
