@@ -44,7 +44,7 @@ The backend model is trained on the popular **Credit Card Fraud Detection Datase
 - **Serialization:** Trained model saved as `model/model.pkl` using `joblib`.
 
 
-CreditCardFraudDetection/
+📂 CreditCardFraudDetection/
 │
 ├── app.py                     # Flask web app (routes + prediction logic)
 ├── train_model.py             # Model training & evaluation
@@ -66,6 +66,7 @@ CreditCardFraudDetection/
 └── static/
     └── css/
         └── style.css          # Modern dark-glass UI styling
+
 
 ```bash
 python train_model.py
